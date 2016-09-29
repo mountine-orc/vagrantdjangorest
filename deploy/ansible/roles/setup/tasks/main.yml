@@ -1,0 +1,53 @@
+- name: git clone project
+  git: repo=https://github.com/mountine-orc/djangorest.git dest=/home/mylogin/hello dest=/vagrant_data/djangorest
+
+- name: install software 
+  apt: pkg='{{ item }}'
+  with_items:
+    - git
+    - nginx
+    - python3
+    - python3-dev
+    #- python-virtualenv
+    #- python3.4-venv
+    - python3-pip
+
+- name: install uwsgi
+  pip: name=uwsgi executable=pip3
+
+- name: setup project uwsgi configuration file
+  template: "src=uwsgi_conf.j2 dest=/etc/init/uwsgi.conf"
+  notify:
+    - restart uWSGI
+
+- name: Creates directory /etc/uwsgi/sites
+  file: path=/etc/uwsgi/sites state=directory
+
+- name: setup djangorest.ini file for uwsgi server
+  template: src="djangorest_ini.j2" dest="/etc/uwsgi/sites/djangorest.ini"
+  notify:
+    - restart uWSGI
+
+
+- name: pip install virtualenv
+  pip: name=virtualenv executable=pip3
+
+- name: install requirements and create virtualenv
+  pip: requirements=/vagrant_data/djangorest/requirements.txt virtualenv=/vagrant_data/Env/djangorest virtualenv_command="/usr/local/bin/virtualenv --always-copy"
+
+
+
+- name: django make migrations
+  django_manage: command="migrate" app_path=/vagrant_data/djangorest virtualenv=/vagrant_data/Env/djangorest
+
+- name: django crate admin user
+  django_manage: command="createsuperuser --noinput --username=admin --email=admin@example.com" app_path=/vagrant_data/djangorest virtualenv=/vagrant_data/Env/djangorest
+
+- name: django create stat files
+  django_manage: command="collectstatic --noinput" app_path=/vagrant_data/djangorest virtualenv=/vagrant_data/Env/djangorest
+
+- name: nginx config for djangorest
+  template: src="nginx_conf.j2" dest="/etc/nginx/sites-enabled/djangorest"
+  notify:
+    - restart nginx
+

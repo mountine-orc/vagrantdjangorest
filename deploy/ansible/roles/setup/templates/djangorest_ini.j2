@@ -1,0 +1,15 @@
+[uwsgi]
+project = djangorest
+base = /vagrant_data
+
+chdir = %(base)/%(project)
+home = %(base)/Env/%(project)
+module = %(project).wsgi:application
+wsgi-file = currency35djproject/wsgi.py
+
+master = true
+processes = 5
+
+socket = /tmp/%(project).sock
+chmod-socket = 664
+vacuum = true

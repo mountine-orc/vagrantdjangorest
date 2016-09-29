@@ -1,0 +1,14 @@
+server {
+    listen 80;
+    server_name djangorest2.com www.djangorest2.com;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /vagrant_data/djangorest;
+    }
+
+    location / {
+        include         uwsgi_params;
+        uwsgi_pass      unix:/tmp/djangorest.sock;
+    }
+}
