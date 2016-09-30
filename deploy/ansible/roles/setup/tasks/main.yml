@@ -8,7 +8,7 @@
     #- python-virtualenv
     #- python3.4-venv
     - python3-pip
-    - python-mysqldb
+    # - python-mysqldb
     - mysql-server
 
 - name: git clone project
@@ -41,7 +41,7 @@
 - name: create MySql database for django app
   mysql_db: name=djangorest state=present
 
-- name: create MySql user for django app
+  - name: create MySql user for django app
   mysql_user: name=djangorest password=djangorest priv=*.*:ALL state=present
 
 
