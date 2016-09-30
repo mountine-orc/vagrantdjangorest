@@ -9,6 +9,7 @@
     #- python3.4-venv
     - python3-pip
     # - python-mysqldb
+    - libmysqlclient-dev
     - mysql-server
 
 - name: git clone project
@@ -35,13 +36,13 @@
   pip: name=virtualenv executable=pip3
 
 - name: install requirements and create virtualenv
-  pip: requirements=/vagrant_data/djangorest/requirements.txt virtualenv=/vagrant_data/Env/djangorest virtualenv_command="/usr/local/bin/virtualenv --always-copy"
+  pip: requirements=/vagrant_data/djangorest/requirements.txt virtualenv=/vagrant_data/Env/djangorest virtualenv_command="/usr/local/bin/virtualenv --always-copy" extra_args="--ignore-installed" virtualenv_site_packages=yes
 
 
 - name: create MySql database for django app
   mysql_db: name=djangorest state=present
 
-  - name: create MySql user for django app
+- name: create MySql user for django app
   mysql_user: name=djangorest password=djangorest priv=*.*:ALL state=present
 
 
