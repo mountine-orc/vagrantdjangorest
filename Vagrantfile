@@ -71,6 +71,8 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
   # config.vm.provision :shell, :inline => "apt-get install build-essential"
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+  
   config.vm.provision :shell, :inline =>
     "/vagrant_data/internal-ansible-ubuntu.sh"
 end
